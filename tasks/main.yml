@@ -1,0 +1,21 @@
+---
+- name: Install git.
+  homebrew:
+    name: git
+    state: present
+
+- name: Ensure there is a ~/.gitignore file
+  file:
+    path: ~/.gitignore
+    state: touch
+
+- name: Make sure git branch parsing and autocompletion are setup in .bash_profile.
+  blockinfile:
+    dest: '~/.bash_profile'
+    marker: '# {mark} -- git branch parsing and autocompletion.'
+    state: present
+    content: |
+      source /usr/local/etc/bash_completion.d/git-completion.bash
+      parse_git_branch() {
+        git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/ (\1)/'
+      }
